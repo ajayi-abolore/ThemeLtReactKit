@@ -1,0 +1,9 @@
+{
+  "themeName": "ThemeLtReactTest",
+  "version": "1.0.0",
+  "buildDirectory": "dist",
+  "outputDirectory": "exports",
+  "reactMountId": "root",
+  "defaultView": "ReactView",
+  "defaultLayout": "Default"
+}
