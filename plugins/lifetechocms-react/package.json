@@ -1,0 +1,23 @@
+
+{
+  "name": "@lifetechocms/react",
+  "version": "0.1.0",
+  "description": "React integration plugin for LifeTechOCMS themes",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./vite": "./vite/index.js"
+  },
+  "files": [
+    "index.js",
+    "runtime",
+    "vite"
+  ],
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "vite": "^8.0.0"
+  },
+  "private": true
+}
