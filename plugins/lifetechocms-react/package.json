@@ -7,12 +7,14 @@
   "main": "./index.js",
   "exports": {
     ".": "./index.js",
-    "./vite": "./vite/index.js"
+    "./vite": "./vite/index.js",
+    "./exporter": "./exporter/index.js"
   },
   "files": [
     "index.js",
     "runtime",
-    "vite"
+    "vite",
+    "exporter"
   ],
   "peerDependencies": {
     "react": "^19.0.0",

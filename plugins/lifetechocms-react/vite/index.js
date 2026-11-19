@@ -59,14 +59,30 @@ export default function lifetechReact(options = {}) {
 
       virtualModules = generated.modules;
 
+      
       return {
         build: {
           manifest: true,
+          assetsDir: 'Assets',
           rolldownOptions: {
-            input: generated.entries
+            input: generated.entries,
+            output: {
+              entryFileNames: 'Assets/js/[name]-[hash].js',
+              chunkFileNames: 'Assets/js/[name]-[hash].js',
+              assetFileNames: (assetInfo) => {
+                const name = assetInfo.names?.[0] ?? '';
+
+                if (name.endsWith('.css')) {
+                  return 'Assets/css/[name]-[hash][extname]';
+                }
+
+                return 'Assets/[name]-[hash][extname]';
+              }
+            }
           }
         }
       };
+
     },
 
     // 5. Get the final Vite build output directory

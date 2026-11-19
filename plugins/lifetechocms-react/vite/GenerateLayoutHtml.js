@@ -6,8 +6,7 @@ export function generateLayoutHtml({
   outputDirectory,
   projectRoot,
   viewsDirectory = 'src/Views',
-  themeName,
-  assetDirectory = 'Assets/Build'
+  themeName
 }) {
   const manifestPath = path.join(
     outputDirectory, '.vite', 'manifest.json'
@@ -61,7 +60,7 @@ export function generateLayoutHtml({
     collectCss(key);
 
     const assetUrl = file =>
-      `<?= ltThemePath() ?>/${themeName}/${assetDirectory}/${file}`;
+      `<?= ltThemePath() ?>/${themeName}/${file}`;
 
     const cssTags = [...cssFiles]
       .map(file =>
