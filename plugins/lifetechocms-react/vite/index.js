@@ -1,19 +1,34 @@
+
 import path from 'node:path';
 
-import { discoverLayouts } from './DiscoverLayouts.js';
 import { generateEntries } from './GenerateEntries.js';
+import { generateLayoutHtml } from './GenerateLayoutHtml.js';
+import { discoverLayouts } from './DiscoverLayouts.js';
 
 export default function lifetechReact(options = {}) {
+
+  // 1. Plugin options
   const layoutsDirectory =
     options.layoutsDirectory ?? 'src/Layouts';
 
   const viewsDirectory =
     options.viewsDirectory ?? 'src/Views';
 
+  const themeName = options.themeName;
+
+  if (!themeName || !/^[A-Za-z][A-Za-z0-9_-]*$/.test(themeName)) {
+    throw new Error(
+      'LifeTechOCMS: Provide a valid themeName in Vite configuration.'
+    );
+  }
+
+  // 2. Virtual module identifiers
   const viewsVirtualId = 'virtual:lifetech-views';
   const resolvedViewsId = '\0' + viewsVirtualId;
 
+  // 3. Plugin variables
   let projectRoot;
+  let buildOutputDirectory;
   let virtualModules = {};
 
   return {
@@ -21,8 +36,11 @@ export default function lifetechReact(options = {}) {
 
     enforce: 'pre',
 
+    // 4. Discover Layouts and generate Vite entries
     config(config) {
-      projectRoot = path.resolve(config.root || process.cwd());
+      projectRoot = path.resolve(
+        config.root || process.cwd()
+      );
 
       const layouts = discoverLayouts(
         projectRoot,
@@ -51,6 +69,15 @@ export default function lifetechReact(options = {}) {
       };
     },
 
+    // 5. Get the final Vite build output directory
+    configResolved(config) {
+      buildOutputDirectory = path.resolve(
+        config.root,
+        config.build.outDir
+      );
+    },
+
+    // 6. Resolve virtual modules
     resolveId(id) {
       if (id === viewsVirtualId) {
         return resolvedViewsId;
@@ -61,35 +88,45 @@ export default function lifetechReact(options = {}) {
       }
     },
 
+    // 7. Load React Views and generated Layout entries
     load(id) {
-    if (id === resolvedViewsId) {
-        // Vite requires a project-root-relative glob pattern.
+      if (id === resolvedViewsId) {
+
         const pattern = '/' +
-        viewsDirectory
+          viewsDirectory
             .replace(/\\/g, '/')
             .replace(/^\/+|\/+$/g, '') +
-        '/*.jsx';
+          '/*.jsx';
 
         return `
-        const modules = import.meta.glob(
+          const modules = import.meta.glob(
             ${JSON.stringify(pattern)},
             { eager: true }
-        );
+          );
 
-        const views = {};
+          const views = {};
 
-        for (const [file, module] of Object.entries(modules)) {
+          for (const [file, module] of Object.entries(modules)) {
             const name = file.split('/').pop().replace(/\\.jsx$/, '');
             views[name] = module.default;
-        }
+          }
 
-        export default views;
+          export default views;
         `;
-    }
+      }
 
-    return virtualModules[id];
-    }
+      return virtualModules[id];
+    },
 
+    // 8. Generate LifeTechOCMS HTML Layouts after build
+   closeBundle() {
+      generateLayoutHtml({
+        outputDirectory: buildOutputDirectory,
+        projectRoot,
+        viewsDirectory,
+        themeName
+      });
+    }
 
   };
 }

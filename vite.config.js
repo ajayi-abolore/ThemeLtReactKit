@@ -7,7 +7,15 @@ import lifetechReact from '@lifetechocms/react/vite';
 export default defineConfig(({ command }) => ({
   plugins: [
     react(),
-    ...(command === 'build' ? [lifetechReact()] : [])
+    ...(command === 'build'
+      ? [
+          lifetechReact({
+            themeName: 'ThemeLtReactTest',
+            layoutsDirectory: 'src/Layouts',
+            viewsDirectory: 'src/Views'
+          })
+        ]
+      : [])
   ],
 
   base: './',
