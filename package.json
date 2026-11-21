@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "export": "node scripts/export-lifetech.mjs"
+    "lt-export": "node scripts/export-lifetech.mjs"
   },
   "dependencies": {
     "react": "^19.3.1",

@@ -1,8 +1,7 @@
-
 {
   "name": "@lifetechocms/react",
   "version": "0.1.0",
-  "description": "React integration plugin for LifeTechOCMS themes",
+  "description": "React and Vite integration for building and exporting LifeTechOCMS themes.",
   "type": "module",
   "main": "./index.js",
   "exports": {
@@ -14,12 +13,25 @@
     "index.js",
     "runtime",
     "vite",
-    "exporter"
+    "exporter",
+    "README.md",
+    "LICENSE"
   ],
+  "keywords": [
+    "lifetechocms",
+    "react",
+    "vite",
+    "cms",
+    "theme",
+    "plugin"
+  ],
+  "license": "MIT",
   "peerDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "vite": "^8.0.0"
   },
-  "private": true
+  "publishConfig": {
+    "access": "public"
+  }
 }

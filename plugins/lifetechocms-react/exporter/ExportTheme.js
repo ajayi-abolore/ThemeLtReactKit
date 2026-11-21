@@ -42,7 +42,8 @@ export function exportTheme({
   );
 
   try {
-    for (const folder of ['Assets', 'Layouts', 'Views']) {
+    //our current exporter copies this from the built file
+    for (const folder of ['Assets', 'Layouts', 'Views', 'Storage']) {
       fs.cpSync(
         path.join(source, folder),
         path.join(temporary, folder),

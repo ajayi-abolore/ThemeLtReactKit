@@ -4,5 +4,5 @@ exportTheme({
   projectRoot: process.cwd(),
   themeName: 'ThemeLtReactTest',
   buildDirectory: 'dist',
-  exportDirectory: 'exports'
+  exportDirectory: 'lt-exports'
 });

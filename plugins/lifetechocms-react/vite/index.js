@@ -4,6 +4,8 @@ import path from 'node:path';
 import { generateEntries } from './GenerateEntries.js';
 import { generateLayoutHtml } from './GenerateLayoutHtml.js';
 import { discoverLayouts } from './DiscoverLayouts.js';
+import { generateLayoutMapping } from './GenerateLayoutMapping.js';
+
 
 export default function lifetechReact(options = {}) {
 
@@ -94,7 +96,7 @@ export default function lifetechReact(options = {}) {
             output: {
               entryFileNames: 'Assets/js/[name].js',
 
-              chunkFileNames: 'Assets/js/[name].js',
+              chunkFileNames: 'Assets/js/LtChunk-[name].js',
 
               assetFileNames: assetInfo => {
                 const name = assetInfo.names?.[0] ?? '';
@@ -168,11 +170,17 @@ export default function lifetechReact(options = {}) {
     },
 
     // 8. Generate LifeTechOCMS HTML Layouts after build
-   closeBundle() {
+    async closeBundle() {
       generateLayoutHtml({
         outputDirectory: buildOutputDirectory,
         projectRoot,
         viewsDirectory,
+        themeName
+      });
+
+      await generateLayoutMapping({
+        projectRoot,
+        outputDirectory: buildOutputDirectory,
         themeName
       });
     }
