@@ -5,6 +5,7 @@ export default function Home() {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [homeCount, setHomeCount] = useState(0);
 
   useEffect(() => {
     apiGet('/blogs/posts')
@@ -41,6 +42,15 @@ export default function Home() {
           <small>Status: {post.status}</small>
         </article>
       ))}
+
+      <div>
+        <h3>Home State Test</h3>
+
+        <button onClick={() => setHomeCount(count => count + 1)}>
+          Home Count: {homeCount}
+        </button>
+      </div>
+
     </main>
   );
 }

@@ -25,7 +25,7 @@ export function generateEntries(
     const virtualId = `virtual:lifetech-layout-${name}`;
     const resolvedId = `\0${virtualId}`;
 
-    entries[name] = resolvedId;
+    entries[`Layout${name}`] = resolvedId;
 
     modules[resolvedId] = `
       import Layout from ${JSON.stringify(normalize(layoutPath))};
