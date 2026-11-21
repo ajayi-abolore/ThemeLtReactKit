@@ -1,0 +1,1 @@
+import{r as e,t}from"./client.js";var n=t(),r=e(),i=new WeakMap;function a(e,t){if(!e||!t)return null;if(i.has(e))return i.get(e);let a=(0,n.createRoot)(e);return a.render((0,r.jsx)(t,{})),i.set(e,a),a}export{a as t};

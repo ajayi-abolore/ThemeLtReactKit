@@ -1,0 +1,1 @@
+import{r as e}from"./client.js";import{t}from"./LifeTechViewEntry.js";var n=e();function r(){return(0,n.jsxs)(`div`,{children:[(0,n.jsx)(`h1`,{children:`LifeTechOCMS Blog`}),(0,n.jsx)(`p`,{children:`Welcome to the Blog View.`}),(0,n.jsx)(`p`,{children:`This View is rendered using React Router.`})]})}document.querySelectorAll(`[data-lt-view="Blog"]`).forEach(e=>{t(e,r)});

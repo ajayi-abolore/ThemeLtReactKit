@@ -47,6 +47,30 @@ export default function lifetechReact(options = {}) {
         layoutsDirectory
       );
 
+      // Generate a fallback Layout only when none exists.
+      if (Object.keys(layouts).length === 0) {
+        const defaultLayoutId =
+          'virtual:lifetech-default-layout';
+
+        layouts.Default = defaultLayoutId;
+
+        virtualModules['\0' + defaultLayoutId] = `
+          import React from 'react';
+
+          export default function Default({ children }) {
+            return React.createElement(
+              React.Fragment,
+              null,
+              children
+            );
+          }
+        `;
+
+        console.log(
+          '[LifeTechOCMS] Using generated Default Layout.'
+        );
+      }
+
       const pluginRoot = path.resolve(
         import.meta.dirname,
         '..'
@@ -54,29 +78,32 @@ export default function lifetechReact(options = {}) {
 
       const generated = generateEntries(
         layouts,
-        pluginRoot
+        pluginRoot,
+        projectRoot,
+        viewsDirectory
       );
-
-      virtualModules = generated.modules;
-
+    
+     virtualModules = {...virtualModules,...generated.modules};
       
       return {
         build: {
           manifest: true,
           assetsDir: 'Assets',
           rolldownOptions: {
-            input: generated.entries,
+            input: generated.entries,           
             output: {
-              entryFileNames: 'Assets/js/[name]-[hash].js',
-              chunkFileNames: 'Assets/js/[name]-[hash].js',
-              assetFileNames: (assetInfo) => {
+              entryFileNames: 'Assets/js/[name].js',
+
+              chunkFileNames: 'Assets/js/[name].js',
+
+              assetFileNames: assetInfo => {
                 const name = assetInfo.names?.[0] ?? '';
 
                 if (name.endsWith('.css')) {
-                  return 'Assets/css/[name]-[hash][extname]';
+                  return 'Assets/css/[name][extname]';
                 }
 
-                return 'Assets/[name]-[hash][extname]';
+                return 'Assets/[name][extname]';
               }
             }
           }
@@ -101,6 +128,12 @@ export default function lifetechReact(options = {}) {
 
       if (Object.hasOwn(virtualModules, id)) {
         return id;
+      }
+
+      const resolvedId = '\0' + id;
+
+      if (Object.hasOwn(virtualModules, resolvedId)) {
+        return resolvedId;
       }
     },
 
