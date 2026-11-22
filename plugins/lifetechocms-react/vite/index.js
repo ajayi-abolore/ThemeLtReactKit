@@ -1,4 +1,4 @@
-
+import fs from 'node:fs';
 import path from 'node:path';
 
 import {  generateEntries} from './GenerateEntries.js';
@@ -26,7 +26,12 @@ export default function lifetechReact(options = {}) {
       'LifeTechOCMS: Provide a valid themeName in Vite configuration.'
     );
   }
-
+  // Activate LifeTech generation only during lt-export.
+  if (process.env.LIFETECH_BUILD !== 'true') {
+    return {
+      name: 'lifetechocms-react'
+    };
+  }
   // 2. Virtual module identifiers
   const viewsVirtualId = 'virtual:lifetech-views';
   const resolvedViewsId = '\0' + viewsVirtualId;
@@ -131,10 +136,26 @@ export default function lifetechReact(options = {}) {
     },
 
     // 5. Resolve the final build directory.
+    /*configResolved(config) {
+      buildOutputDirectory = path.resolve(
+        config.root,
+        config.build.outDir
+      );
+    },*/
     configResolved(config) {
       buildOutputDirectory = path.resolve(
         config.root,
         config.build.outDir
+      );
+
+      console.log(
+        '[LifeTechOCMS] Output directory:',
+        buildOutputDirectory
+      );
+
+      console.log(
+        '[LifeTechOCMS] Manifest enabled:',
+        config.build.manifest
       );
     },
 
@@ -197,7 +218,63 @@ export default function lifetechReact(options = {}) {
     },
 
     // 8. Generate LifeTech HTML and metadata.
+    /*
     async closeBundle() {
+      generateLayoutHtml({
+        outputDirectory: buildOutputDirectory,
+        projectRoot,
+        viewsDirectory,
+        layouts: discoveredLayouts,
+        themeName
+      });
+
+      await generateLayoutMapping({
+        projectRoot,
+        outputDirectory: buildOutputDirectory,
+        themeName
+      });
+
+      generateThemeMetadata({
+        outputDirectory: buildOutputDirectory,
+        themeName
+      });
+    }
+    */
+    // 8. Generate LifeTech HTML and metadata.
+    async closeBundle() {
+
+      const manifestPath = path.join(
+        buildOutputDirectory,
+        '.vite',
+        'manifest.json'
+      );
+
+      console.log(
+        '[LifeTechOCMS] closeBundle executed.'
+      );
+
+      console.log(
+        '[LifeTechOCMS] Build directory:',
+        buildOutputDirectory
+      );
+
+      console.log(
+        '[LifeTechOCMS] Manifest exists:',
+        fs.existsSync(manifestPath)
+      );
+
+      if (!fs.existsSync(manifestPath)) {
+        console.log(
+          '[LifeTechOCMS] Manifest unavailable during closeBundle.'
+        );
+
+        console.log(
+          '[LifeTechOCMS] Skipping HTML generation for debugging.'
+        );
+
+        return;
+      }
+
       generateLayoutHtml({
         outputDirectory: buildOutputDirectory,
         projectRoot,

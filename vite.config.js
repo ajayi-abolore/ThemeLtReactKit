@@ -1,21 +1,16 @@
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-
 import lifetechReact from '@lifetechocms/react/vite';
 
-export default defineConfig(({ command }) => ({
+export default defineConfig(() => ({
   plugins: [
     react(),
-    ...(command === 'build'
-      ? [
-          lifetechReact({
-            themeName: 'ThemeLtReactTest',
-            layoutsDirectory: 'src/Layouts',
-            viewsDirectory: 'src/Views'
-          })
-        ]
-      : [])
+
+    lifetechReact({
+      themeName: 'ThemeLtReactTest',
+      layoutsDirectory: 'src/Layouts',
+      viewsDirectory: 'src/Views'
+    })
   ],
 
   base: './',
