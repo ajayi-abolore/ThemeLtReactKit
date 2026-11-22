@@ -126,9 +126,20 @@ export function exportTheme({
     );
 
     return destination;
-  } finally {
+  }finally {
     if (fs.existsSync(temporary)) {
-      fs.rmSync(temporary, { recursive: true, force: true });
+        console.log(
+        '[LifeTechOCMS] Temporary directory preserved:',
+        temporary
+        );
     }
-  }
+    }
+  
+  
+  
+    /*finally {
+        if (fs.existsSync(temporary)) {
+        fs.rmSync(temporary, { recursive: true, force: true });
+        }
+    }*/
 }
