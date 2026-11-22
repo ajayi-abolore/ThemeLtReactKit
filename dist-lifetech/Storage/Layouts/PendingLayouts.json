@@ -1,0 +1,12 @@
+[
+  {
+    "layoutName": "Default.html",
+    "contentName": "Home.html",
+    "layoutPackageName": "ThemeLtReactTest"
+  },
+  {
+    "layoutName": "BlogLayout.html",
+    "contentName": "Blog.html",
+    "layoutPackageName": "ThemeLtReactTest"
+  }
+]

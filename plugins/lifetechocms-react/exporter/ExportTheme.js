@@ -4,6 +4,32 @@ import path from 'node:path';
 
 import { validateTheme } from './ValidateTheme.js';
 
+
+function countHtmlFiles(directory) {
+  if (!fs.existsSync(directory)) {
+    return 0;
+  }
+
+  let count = 0;
+
+  for (const entry of fs.readdirSync(directory, {
+    withFileTypes: true
+  })) {
+    const fullPath = path.join(directory, entry.name);
+
+    if (entry.isDirectory()) {
+      count += countHtmlFiles(fullPath);
+    } else if (
+      entry.isFile() &&
+      path.extname(entry.name).toLowerCase() === '.html'
+    ) {
+      count++;
+    }
+  }
+
+  return count;
+}
+
 export function exportTheme({
   projectRoot = process.cwd(),
   themeName,
@@ -76,8 +102,8 @@ export function exportTheme({
     }
 
     try {
-        console.log('[LifeTechOCMS] Temporary:', temporary);
-        console.log('[LifeTechOCMS] Destination:', destination);
+        //console.log('[LifeTechOCMS] Temporary:', temporary);
+        //console.log('[LifeTechOCMS] Destination:', destination);
 
         console.log(
             '[LifeTechOCMS] Temporary exists:',
@@ -118,28 +144,26 @@ export function exportTheme({
     console.log(
       `[LifeTechOCMS] Exported theme: ${destination}`
     );
-    console.log(
-      `[LifeTechOCMS] Layouts: ${resources.layouts.length}`
+   console.log(
+    `[LifeTechOCMS] Layouts: ${
+        countHtmlFiles(path.join(destination, 'Layouts'))
+    }`
     );
+
     console.log(
-      `[LifeTechOCMS] Views: ${resources.views.length}`
+    `[LifeTechOCMS] Views: ${
+        countHtmlFiles(path.join(destination, 'Views'))
+    }`
     );
 
     return destination;
   }finally {
-    if (fs.existsSync(temporary)) {
-        console.log(
-        '[LifeTechOCMS] Temporary directory preserved:',
-        temporary
-        );
-    }
-    }
-  
-  
-  
-    /*finally {
         if (fs.existsSync(temporary)) {
         fs.rmSync(temporary, { recursive: true, force: true });
         }
-    }*/
+    }
+  
+  
+  
+    
 }

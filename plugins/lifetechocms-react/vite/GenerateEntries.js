@@ -60,12 +60,11 @@ export function getRelativeName(baseDirectory, file) {
 
 // Create a unique Vite entry name.
 export function getEntryName(type, relativeName) {
-  // Encode the full relative path to avoid collisions
-  // between nested names and literal separators.
-  const encoded = Buffer.from(relativeName, 'utf8')
-    .toString('hex');
+  const normalized = relativeName
+    .replace(/\\/g, '/')
+    .replace(/\//g, '_');
 
-  return `${type}_${encoded}`;
+  return `${type}_${normalized}`;
 }
 
 export function generateEntries(
