@@ -39,6 +39,6 @@
     "access": "public"
   },
   "bin": {
-    "lt-export": "./bin/lt-export.js"
+    "lt-export": "bin/lt-export.js"
   }
 }
