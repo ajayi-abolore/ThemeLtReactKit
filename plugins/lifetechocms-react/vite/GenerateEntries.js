@@ -1,5 +1,72 @@
+
 import fs from 'node:fs';
 import path from 'node:path';
+
+const SUPPORTED_EXTENSIONS = new Set([
+  '.js',
+  '.jsx',
+  '.ts',
+  '.tsx'
+]);
+
+const normalize = file => file.replace(/\\/g, '/');
+
+// Recursively discover supported React files.
+export function discoverReactFiles(directory) {
+  if (!fs.existsSync(directory)) {
+    return [];
+  }
+
+  const files = [];
+
+  function walk(currentDirectory) {
+    const entries = fs.readdirSync(currentDirectory, {
+      withFileTypes: true
+    });
+
+    for (const entry of entries) {
+      const fullPath = path.join(
+        currentDirectory,
+        entry.name
+      );
+
+      if (entry.isDirectory()) {
+        walk(fullPath);
+      } else if (
+        entry.isFile() &&
+        SUPPORTED_EXTENSIONS.has(
+          path.extname(entry.name).toLowerCase()
+        )
+      ) {
+        files.push(fullPath);
+      }
+    }
+  }
+
+  walk(directory);
+
+  return files.sort();
+}
+
+// Convert a file into its relative component name.
+// Example: Blog/Details.tsx -> Blog/Details
+export function getRelativeName(baseDirectory, file) {
+  const relative = normalize(
+    path.relative(baseDirectory, file)
+  );
+
+  return relative.replace(/\.(jsx?|tsx?)$/i, '');
+}
+
+// Create a unique Vite entry name.
+export function getEntryName(type, relativeName) {
+  // Encode the full relative path to avoid collisions
+  // between nested names and literal separators.
+  const encoded = Buffer.from(relativeName, 'utf8')
+    .toString('hex');
+
+  return `${type}_${encoded}`;
+}
 
 export function generateEntries(
   layouts,
@@ -10,25 +77,35 @@ export function generateEntries(
   const entries = {};
   const modules = {};
 
-  const normalize = file => file.replace(/\\/g, '/');
-
   const layoutRuntime = normalize(
-    path.resolve(pluginRoot, 'runtime/LifeTechEntry.jsx')
+    path.resolve(
+      pluginRoot,
+      'runtime/LifeTechEntry.jsx'
+    )
   );
 
   const viewRuntime = normalize(
-    path.resolve(pluginRoot, 'runtime/LifeTechViewEntry.jsx')
+    path.resolve(
+      pluginRoot,
+      'runtime/LifeTechViewEntry.jsx'
+    )
   );
 
-  // Generate independent Layout entries.
+  // Layouts are supplied by discoverLayouts().
+  // Their keys must represent relative paths,
+  // e.g. Admin/Dashboard.
   for (const [name, layoutPath] of Object.entries(layouts)) {
-    const virtualId = `virtual:lifetech-layout-${name}`;
-    const resolvedId = `\0${virtualId}`;
+    const entryName = getEntryName('Layout', name);
+    const resolvedId =
+      `\0virtual:lifetech-layout-${entryName}`;
 
-    entries[`Layout${name}`] = resolvedId;
+    entries[entryName] = resolvedId;
 
     modules[resolvedId] = `
-      import Layout from ${JSON.stringify(normalize(layoutPath))};
+      import Layout from ${JSON.stringify(
+        normalize(layoutPath)
+      )};
+
       import { mountLifeTechLayout } from
         ${JSON.stringify(layoutRuntime)};
 
@@ -36,37 +113,70 @@ export function generateEntries(
     `;
   }
 
-  // Generate independent View entries.
-  const viewsPath = path.resolve(projectRoot, viewsDirectory);
+  // Discover Views recursively.
+  const viewsPath = path.resolve(
+    projectRoot,
+    viewsDirectory
+  );
 
   if (!fs.existsSync(viewsPath)) {
     throw new Error(
-      `LifeTechOCMS: Views directory not found: ${viewsPath}`
+      'LifeTechOCMS: Views directory not found: ' +
+      viewsPath
+    );
+  }
+  if (!fs.statSync(viewsPath).isDirectory()) {
+    throw new Error(
+      `LifeTechOCMS: Expected a Views directory: ${viewsPath}`
     );
   }
 
-  const viewFiles = fs.readdirSync(viewsPath)
-    .filter(file => file.endsWith('.jsx'))
-    .sort();
+  const viewFiles = discoverReactFiles(viewsPath);
+
+  // Prevent ambiguous names such as Home.jsx and Home.tsx
+  // within the same directory.
+  const usedNames = new Set();
 
   for (const file of viewFiles) {
-    const name = path.basename(file, '.jsx');
-    const viewPath = normalize(path.join(viewsPath, file));
+    const relativeName = getRelativeName(
+      viewsPath,
+      file
+    );
 
-    const virtualId = `virtual:lifetech-view-${name}`;
-    const resolvedId = `\0${virtualId}`;
+    const collisionKey = relativeName.toLowerCase();
 
-    // Prefix the entry name to avoid collisions
-    // between Layout and View names.
-    entries[`View${name}`] = resolvedId;
+    if (usedNames.has(collisionKey)) {
+      throw new Error(
+        `LifeTechOCMS: Duplicate View name: ${relativeName}`
+      );
+    }
+
+    usedNames.add(collisionKey);
+
+    const entryName = getEntryName(
+      'View',
+      relativeName
+    );
+
+    const resolvedId =
+      `\0virtual:lifetech-view-${entryName}`;
+
+    entries[entryName] = resolvedId;
 
     modules[resolvedId] = `
-      import View from ${JSON.stringify(viewPath)};
+      import View from ${JSON.stringify(
+        normalize(file)
+      )};
+
       import { mountLifeTechView } from
         ${JSON.stringify(viewRuntime)};
 
       document
-        .querySelectorAll('[data-lt-view="${name}"]')
+        .querySelectorAll(
+          ${JSON.stringify(
+            `[data-lt-view="${relativeName}"]`
+          )}
+        )
         .forEach(element => {
           mountLifeTechView(element, View);
         });
