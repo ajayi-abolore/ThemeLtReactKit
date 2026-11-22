@@ -5,6 +5,7 @@ import { generateEntries } from './GenerateEntries.js';
 import { generateLayoutHtml } from './GenerateLayoutHtml.js';
 import { discoverLayouts } from './DiscoverLayouts.js';
 import { generateLayoutMapping } from './GenerateLayoutMapping.js';
+import { generateThemeMetadata } from './GenerateThemeMetadata.js';
 
 
 export default function lifetechReact(options = {}) {
@@ -180,6 +181,11 @@ export default function lifetechReact(options = {}) {
 
       await generateLayoutMapping({
         projectRoot,
+        outputDirectory: buildOutputDirectory,
+        themeName
+      });
+
+      generateThemeMetadata({
         outputDirectory: buildOutputDirectory,
         themeName
       });

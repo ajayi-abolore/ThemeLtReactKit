@@ -42,13 +42,22 @@ export function exportTheme({
   );
 
   try {
-    //our current exporter copies this from the built file
+    // Copy generated LifeTechOCMS Theme directories
     for (const folder of ['Assets', 'Layouts', 'Views', 'Storage']) {
-      fs.cpSync(
-        path.join(source, folder),
-        path.join(temporary, folder),
-        { recursive: true }
-      );
+
+        const sourceFolder = path.join(source, folder);
+        const destinationFolder = path.join(temporary, folder);
+
+        // Skip directories that do not exist
+        if (!fs.existsSync(sourceFolder)) {
+            continue;
+        }
+
+        fs.cpSync(
+            sourceFolder,
+            destinationFolder,
+            { recursive: true }
+        );
     }
 
     // Preserve any existing export until the copy is complete.
@@ -67,12 +76,39 @@ export function exportTheme({
     }
 
     try {
-      fs.renameSync(temporary, destination);
-    } catch (error) {
-      if (hadExisting && fs.existsSync(backup)) {
-        fs.renameSync(backup, destination);
-      }
-      throw error;
+        console.log('[LifeTechOCMS] Temporary:', temporary);
+        console.log('[LifeTechOCMS] Destination:', destination);
+
+        console.log(
+            '[LifeTechOCMS] Temporary exists:',
+            fs.existsSync(temporary)
+        );
+
+        console.log(
+            '[LifeTechOCMS] Destination exists:',
+            fs.existsSync(destination)
+        );
+
+        console.log(
+            '[LifeTechOCMS] Temporary contents:',
+            fs.readdirSync(temporary)
+        );
+
+        fs.renameSync(temporary, destination);
+
+        } catch (error) {
+        console.error('[LifeTechOCMS] Rename error:', {
+            code: error.code,
+            syscall: error.syscall,
+            path: error.path,
+            dest: error.dest
+        });
+
+        if (hadExisting && fs.existsSync(backup)) {
+            fs.renameSync(backup, destination);
+        }
+
+        throw error;
     }
 
     if (hadExisting) {

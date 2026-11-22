@@ -1,6 +1,6 @@
 {
   "name": "@lifetechocms/react",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "React and Vite integration for building and exporting LifeTechOCMS themes.",
   "type": "module",
   "main": "./index.js",
@@ -13,6 +13,7 @@
     "index.js",
     "runtime",
     "vite",
+    "bin",
     "exporter",
     "README.md",
     "LICENSE"
@@ -33,5 +34,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "bin": {
+    "lt-export": "./bin/lt-export.js"
   }
 }
