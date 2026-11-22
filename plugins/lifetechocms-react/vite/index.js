@@ -136,12 +136,7 @@ export default function lifetechReact(options = {}) {
     },
 
     // 5. Resolve the final build directory.
-    /*configResolved(config) {
-      buildOutputDirectory = path.resolve(
-        config.root,
-        config.build.outDir
-      );
-    },*/
+
     configResolved(config) {
       buildOutputDirectory = path.resolve(
         config.root,
@@ -241,38 +236,20 @@ export default function lifetechReact(options = {}) {
     }
     */
     // 8. Generate LifeTech HTML and metadata.
+    
+    // 8. Generate LifeTech HTML and metadata.
     async closeBundle() {
-
       const manifestPath = path.join(
         buildOutputDirectory,
         '.vite',
         'manifest.json'
       );
 
-      console.log(
-        '[LifeTechOCMS] closeBundle executed.'
-      );
-
-      console.log(
-        '[LifeTechOCMS] Build directory:',
-        buildOutputDirectory
-      );
-
-      console.log(
-        '[LifeTechOCMS] Manifest exists:',
-        fs.existsSync(manifestPath)
-      );
-
       if (!fs.existsSync(manifestPath)) {
-        console.log(
-          '[LifeTechOCMS] Manifest unavailable during closeBundle.'
+        throw new Error(
+          'LifeTechOCMS: Vite manifest not found. ' +
+          'Theme generation cannot continue.'
         );
-
-        console.log(
-          '[LifeTechOCMS] Skipping HTML generation for debugging.'
-        );
-
-        return;
       }
 
       generateLayoutHtml({
@@ -294,5 +271,8 @@ export default function lifetechReact(options = {}) {
         themeName
       });
     }
+
+
+
   };
 }
