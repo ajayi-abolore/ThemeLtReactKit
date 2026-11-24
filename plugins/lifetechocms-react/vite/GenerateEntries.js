@@ -163,6 +163,16 @@ export function generateEntries(
     entries[entryName] = resolvedId;
 
     modules[resolvedId] = `
+      // LifeTechOCMS View: ${relativeName}
+      // Source: ${normalize(file)}
+      //
+      // This View must provide a default export.
+      //
+      // Example:
+      // export default function Home() {
+      //   return <h1>Welcome</h1>;
+      // }
+
       import View from ${JSON.stringify(
         normalize(file)
       )};
@@ -180,6 +190,7 @@ export function generateEntries(
           mountLifeTechView(element, View);
         });
     `;
+
   }
 
   return {
