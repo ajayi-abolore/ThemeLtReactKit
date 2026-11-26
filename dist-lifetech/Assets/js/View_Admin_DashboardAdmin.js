@@ -1,1 +1,0 @@
-import{r as e}from"./LtChunk-client.js";import{t}from"./LtChunk-LifeTechViewEntry.js";var n=e();function r(){return(0,n.jsxs)(`div`,{children:[(0,n.jsx)(`h2`,{children:`Admin Dashboard`}),(0,n.jsx)(`p`,{children:`Testing nested LifeTechOCMS React Views.`})]})}document.querySelectorAll(`[data-lt-view="Admin/DashboardAdmin"]`).forEach(e=>{t(e,r)});
