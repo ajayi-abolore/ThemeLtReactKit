@@ -72,6 +72,57 @@ Use descriptive PascalCase names for React Layout and View components. Keep impo
 
 These are **provisional conventions**. Proposals to change them are welcome when accompanied by working examples and tests.
 
+## Required Documentation for New or Updated Pages
+
+Every contribution that **creates or changes a React page (View)** must include a corresponding Markdown implementation guide in the repository's **`docs/`** folder. Documentation is part of the same pull request as the code, not a separate follow-up task.
+
+Use the **same filename stem as the page**, replacing `.jsx` or `.tsx` with `.md`. Preserve subfolders for nested Views to avoid naming conflicts:
+
+```text
+src/Views/Home.jsx            → docs/Home.md
+src/Views/Blog.jsx            → docs/Blog.md
+src/Views/admin/Posts.tsx     → docs/admin/Posts.md
+```
+
+Each guide should explain:
+
+1. **Purpose** — what the page does and who uses it.
+2. **Files and dependencies** — its View, Layout, reusable Components, and related imports.
+3. **Implementation** — the important React logic, hooks, and how to reproduce the page.
+4. **Routing** — the standalone React route and the expected LifeTechOCMS page/View assignment after export.
+5. **Backend integration** — MdBlog endpoints used, request handling, configuration, and relevant permissions, or state that no backend is required.
+6. **Testing** — steps to verify the page in standalone mode and, where applicable, as an exported LifeTechOCMS theme.
+7. **Limitations** — incomplete behavior or known issues.
+
+A suggested page guide:
+
+```markdown
+# Blog — Implementation Guide
+
+## Purpose
+Explain the page and its expected behavior.
+
+## Related Files
+Identify the View, Layout, Components, and utilities.
+
+## Implementation
+Explain the key React code and interactions.
+
+## Routing and Theme Export
+Describe the standalone URL and LifeTechOCMS mapping.
+
+## MdBlog API Integration
+Document the endpoints and response handling, if used.
+
+## Testing
+Describe standalone and exported-theme checks.
+
+## Known Limitations
+Record outstanding issues.
+```
+
+For a **new page**, create its guide. For an **existing page**, update its guide to reflect the change. If the guide does not exist yet, add it as part of the pull request. Reviewers should request missing or outdated page documentation before merging.
+
 ## Required Testing
 
 For each relevant pull request, explain which checks were completed:
@@ -86,7 +137,7 @@ If you cannot test LifeTechOCMS integration, say so explicitly in your pull requ
 
 ## Pull Request Description
 
-Include a short summary, the issue being addressed, files or conventions changed, standalone test results, export test results, LifeTechOCMS/MdBlog test results (if applicable), and screenshots for visible UI changes.
+Include a short summary, the issue being addressed, files or conventions changed, the corresponding `docs/` page guide for View changes, standalone test results, export test results, LifeTechOCMS/MdBlog test results (if applicable), and screenshots for visible UI changes.
 
 Example:
 
@@ -95,6 +146,7 @@ Example:
 - Add or improve ...
 
 ## Testing
+- [ ] Matching `docs/` guide added or updated (for View changes)
 - [ ] npm run lint
 - [ ] npm run build
 - [ ] npm run lt-export
