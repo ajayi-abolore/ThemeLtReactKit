@@ -7,7 +7,7 @@ export default defineConfig(() => ({
     react(),
 
     lifetechReact({
-      themeName: 'ThemeLtReactTest',
+      themeName: 'ThemeRjReactTest',
       layoutsDirectory: 'src/Layouts',
       viewsDirectory: 'src/Views'
     })
