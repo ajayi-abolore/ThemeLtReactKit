@@ -1,204 +1,225 @@
 # ThemeLtReactKit
 
-**An experimental React and Vite theme development toolkit for LifeTechOCMS.**
+[![GitHub Stars](https://img.shields.io/github/stars/ajayi-abolore/ThemeLtReactKit)](https://github.com/ajayi-abolore/ThemeLtReactKit/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/ajayi-abolore/ThemeLtReactKit)](https://github.com/ajayi-abolore/ThemeLtReactKit/issues) [![npm Version](https://img.shields.io/npm/v/@lifetechocms/react)](https://www.npmjs.com/package/@lifetechocms/react)
 
-ThemeLtReactKit is an open-source project exploring how React applications can be integrated into LifeTechOCMS themes.
+**An open-source reference React application for developing and exporting [LifeTechOCMS](https://github.com/lifetechOCMS/lifetechocms) themes.**
 
-The project aims to establish reusable development conventions for React-based **Layouts, Views, Components, and Assets**, while preserving LifeTechOCMS's existing routing, page management, and dynamic content architecture.
+ThemeLtReactKit is our first practical test project for defining conventions that future React theme developers can follow. It uses **React, Vite, and the [`@lifetechocms/react`](https://www.npmjs.com/package/@lifetechocms/react) plugin**, with the **MdBlog** module as the LifeTechOCMS backend for integration testing.
 
-> **Development Status: Experimental**
->
-> ThemeLtReactKit is currently under active development and testing. Developers and contributors are welcome to participate in testing, reporting issues, and improving the integration.
+The application is designed to work in **two modes**: as a standalone React application during development, and as an exported theme installed in LifeTechOCMS. Both modes should reuse the same React components wherever possible.
 
-## Project Objectives
+> **Status: Active development / experimental.** This repository is a test bed for discovering and documenting conventions. Some cross-module content and layout behaviors are still being validated; exported themes should be tested in LifeTechOCMS before production use.
 
-- Enable React and JSX development within LifeTechOCMS themes.
-- Integrate React Layouts with LifeTechOCMS dynamic content.
-- Support multiple React Views on the same page.
-- Preserve React features such as `useState`, `useEffect`, and event handlers.
-- Establish standard conventions for React theme development.
-- Develop a reusable React integration plugin.
-- Support Vite-powered compilation and theme export.
+## Goals
 
-## How It Works
+- Build a practical React application that runs independently with Vite.
+- Export React Layouts and Views into a LifeTechOCMS-compatible theme.
+- Use MdBlog APIs to test real module-backed content.
+- Explore dynamic page content, layout assignments, navigation, and role-based access.
+- Establish repeatable conventions for React theme developers.
+- Encourage open-source testing, improvements, and contributions.
 
-LifeTechOCMS remains responsible for page routing, Layout assignment, and content management.
+LifeTechOCMS is a PHP-based modular framework with role-based access control (RBAC). Its backend manages menus, pages, and content according to user roles and permissions, including the **anonymous** role for visitors who are not logged in. Frontend visibility is not a replacement for backend authorization.
 
-React handles the user interface through compiled JSX components.
+## Two Development Modes
 
-```text
-LifeTechOCMS
-    |
-    ├── Page Routing
-    |
-    ├── Assigned Layout
-    |       |
-    |       └── React Layout
-    |               |
-    |               └── Dynamic Content
-    |                       |
-    |                       ├── React Blog View
-    |                       |
-    |                       └── React Home View
-    |
-    └── Theme Assets
-            |
-            └── Vite Compiled Files
-```
+| Mode | Purpose | Command / workflow |
+|---|---|---|
+| Standalone React | Develop and test React routes, components, and MdBlog API integration | `npm run dev` |
+| LifeTechOCMS theme | Compile and export the application into LifeTechOCMS Layouts, Views, and Assets | `npm run lt-export` |
 
-### Dynamic React Views
-
-The integration currently supports loading multiple React Views through HTML placeholders:
-
-```html
-<div data-lt-view="Blog"></div>
-<div data-lt-view="Home"></div>
-```
-
-These placeholders are associated with React components such as:
-
-```text
-src/Views/
-├── Blog.jsx
-└── Home.jsx
-```
-
-LifeTechOCMS determines which contents are assigned to a page, while the React integration renders the corresponding JSX Views.
-
-This functionality has been demonstrated in initial integration tests.
-
-## Technologies
-
-| Technology | Purpose |
-|---|---|
-| LifeTechOCMS | Framework and content management |
-| React | User interface development |
-| JSX | Component development |
-| Vite | Development and build tooling |
-| JavaScript | Integration runtime |
-| MdBlog | Practical integration testing |
-
-## Project Structure
-
-The following structure represents the current development direction and may evolve:
-
-```text
-ThemeLtReactKit/
-├── src/
-│   ├── Layouts/
-│   ├── Views/
-│   ├── Components/
-│   ├── Assets/
-│   ├── Routes/
-│   ├── App.jsx
-│   └── main.jsx
-├── plugins/
-│   └── lifetech-react/
-├── scripts/
-├── vite.config.js
-└── package.json
-```
-
-The `plugins/lifetech-react` directory is intended to contain the reusable integration logic currently being extracted from the React application.
+The standalone application uses React Router. When exported, LifeTechOCMS manages its own pages, menu navigation, layout assignment, and dynamic content. Route behavior and module rendering must be verified in **both** environments.
 
 ## Getting Started
 
-Once the project files are available in the repository, clone the project:
+Requirements: a compatible Node.js installation, npm, and access to a running LifeTechOCMS installation with MdBlog for backend integration tests. Check the Vite version's Node.js requirements before installing.
 
 ```bash
-git clone https://github.com/lifetechOCMS/ThemeLtReactKit.git
-```
-
-Navigate to the project directory:
-
-```bash
+git clone https://github.com/ajayi-abolore/ThemeLtReactKit.git
 cd ThemeLtReactKit
-```
-
-Install dependencies:
-
-```bash
 npm install
-```
-
-Start the development server:
-
-```bash
 npm run dev
 ```
 
-Build the React application:
+Open the local address printed by Vite (the current configuration uses port `5173`). On Windows PowerShell, `npm.cmd` may be used instead of `npm` when script execution is restricted.
 
-```bash
-npm run build
+### Backend API Configuration
+
+ThemeLtReactKit uses the **MdBlog** module through the LifeTechOCMS backend API. Developers should configure the backend address for their own installation rather than hardcoding it in React components.
+
+#### Production API URL — `.env.production`
+
+Open the `.env.production` file in the project root and update:
+
+```env
+VITE_API_BASE_URL=/projects/api/v1/v2
 ```
 
-**Note:** Building the React application does not automatically install the theme in LifeTechOCMS. Theme export and installation automation are still under development.
+Replace the value with the actual API path or full URL for your LifeTechOCMS backend. For example, a backend hosted at a different domain could use:
 
-## Integration Testing with MdBlog
+```env
+VITE_API_BASE_URL=https://example.com/api/v1/v2
+```
 
-ThemeLtReactKit uses **MdBlog** as its primary practical testing module.
+This setting is read by Vite for **production builds**, including the compiled application used for theme export. After editing `.env.production`, rebuild or re-export the application. If you use a different origin, the backend must allow the frontend origin through its CORS configuration. Do not put passwords, private tokens, or other secrets in `VITE_` variables: they are exposed to browser-side JavaScript.
 
-Our integration tests focus on:
+#### Development API URL — `.env.development`
 
-- Rendering MdBlog-related interfaces through React Views.
-- Loading multiple React Views on a single LifeTechOCMS page.
-- Displaying dynamically assigned content inside React Layouts.
-- Testing React state management and event handlers.
-- Verifying compiled JavaScript and CSS integration.
-- Evaluating compatibility between React components and LifeTechOCMS content management.
+For standalone development using Vite's local proxy, set:
 
-## Development Roadmap
+```env
+VITE_API_BASE_URL=/backend
+```
 
-- [x] Establish React and Vite development environment.
-- [x] Integrate a compiled React Layout with LifeTechOCMS.
-- [x] Render multiple React Views dynamically.
-- [x] Display LifeTechOCMS content within a React Layout.
-- [ ] Consolidate the integration into a local plugin.
-- [ ] Implement automatic Layout discovery.
-- [ ] Improve React lifecycle and DOM integration.
-- [ ] Automate React theme compilation and export.
-- [ ] Establish standard React theme development conventions.
-- [ ] Prepare a reusable standalone integration plugin.
+This lets frontend requests use `/backend` while Vite forwards them to your local LifeTechOCMS installation. `.env.development` applies to `npm run dev`; `.env.production` does **not** configure the development server.
 
-The roadmap is subject to change as testing progresses.
+#### Configure the Vite proxy — `vite.config.js`
 
-## Contributing
+Developers must also review the **`target`** and **`rewrite`** settings in `vite.config.js` to match the host, port, and API path of their backend:
 
-We welcome contributions from developers interested in React, Vite, PHP, and LifeTechOCMS.
+```js
+server: {
+  port: 5173,
+  proxy: {
+    '/backend': {
+      target: 'http://localhost',
+      changeOrigin: true,
+      rewrite: path =>
+        path.replace(/^\/backend/, '/projects/api/v1/v2')
+    }
+  }
+}
+```
 
-As this project is experimental, contributions involving testing, bug reports, documentation, and architectural suggestions are particularly valuable.
+- `port: 5173` is the port for the **React/Vite development server**, not the LifeTechOCMS backend.
+- `target` is the **backend host and port**. If the backend runs on a custom port, include it (for example, `http://localhost:8080`).
+- `rewrite` maps the `/backend` prefix to the **real API path** used by that installation.
 
-### How to Contribute
+For example, when LifeTechOCMS runs at `http://localhost:8080` with its API under `/api/v1/v2`, use:
 
-1. Fork the repository.
-2. Create a new branch for your changes.
-3. Implement and test your changes.
-4. Commit and push your work.
-5. Submit a pull request describing your contribution.
+```js
+server: {
+  port: 5173,
+  proxy: {
+    '/backend': {
+      target: 'http://localhost:8080',
+      changeOrigin: true,
+      rewrite: path =>
+        path.replace(/^\/backend/, '/api/v1/v2')
+    }
+  }
+}
+```
 
-Where possible, test integration changes using MdBlog and include reproduction steps for any issues discovered.
+With that configuration, a browser request to `http://localhost:5173/backend/blogs/posts` is proxied during development to `http://localhost:8080/api/v1/v2/blogs/posts`.
 
-For major architectural changes, please open an issue for discussion before implementation.
+**Important:** Vite's `server.proxy` works only when the Vite development server is running. It does not become part of the production build or exported LifeTechOCMS theme. For production, `.env.production` must point to a browser-accessible API endpoint, or the hosting server must provide an equivalent proxy. Restart `npm run dev` after changing `vite.config.js`.
 
-### Report Issues
+#### How API requests select the backend
 
-For issues specifically related to ThemeLtReactKit, use the repository's GitHub Issues section.
+The current API helper, `src/Assets/ApiRequest.js`, selects its base URL in this order:
 
-For general LifeTechOCMS framework issues, please visit:
+1. `window.LT_CONFIG?.baseUrl` when supplied by the LifeTechOCMS runtime.
+2. `VITE_API_BASE_URL` from the active Vite environment.
+3. `/backend` as a fallback.
 
-[LifeTechOCMS Issues](https://github.com/lifetechOCMS/lifetechocms/issues)
+It sends `Accept: application/json`, adds a bearer token when one is supplied through the runtime configuration, and checks `responseCategory` for the LifeTechOCMS success category (`200`). Do not commit credentials or real tokens. Frontend authentication does not replace LifeTechOCMS backend RBAC enforcement.
+
+## Project Structure
+
+The uploaded development snapshot includes the following source layout:
+
+```text
+src/
+├── Assets/
+│   └── ApiRequest.js
+├── Components/
+│   ├── Header.jsx
+│   ├── Footer.jsx
+│   └── LifeTechDynamicContent.jsx
+├── Layouts/
+│   ├── Default.jsx
+│   └── BlogLayout.jsx
+├── Routes/
+│   └── Web.jsx
+├── Views/
+│   ├── Home.jsx
+│   ├── Blog.jsx
+│   └── Admin/
+│       ├── DashboardAdmin.jsx
+│       └── ReportAdmin.tsx
+├── App.jsx
+└── main.jsx
+```
+
+`Layouts` holds page shells; `Views` holds page content; `Components` holds reusable UI; `Routes` defines standalone React navigation; and `Assets` holds integration helpers. This is the **current test structure**, not yet a final framework-wide standard.
+
+## Configure Theme Export
+
+The current Vite integration uses:
+
+```js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import lifetechReact from '@lifetechocms/react/vite';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    lifetechReact({
+      themeName: 'ThemeLtReactTest',
+      layoutsDirectory: 'src/Layouts',
+      viewsDirectory: 'src/Views'
+    })
+  ],
+  base: './'
+});
+```
+
+- `themeName` is the name of the exported LifeTechOCMS theme.
+- `layoutsDirectory` points to your React Layout components.
+- `viewsDirectory` points to your React page/View components.
+
+These paths are relative to the project root and can be changed to match your application. The complete repository configuration also includes the development API proxy shown above.
+
+Export the theme:
+
+```bash
+npm run lt-export
+```
+
+The current test export uses `ThemeLtReactTest` as its theme name. Its generated structure includes `Layouts/`, `Views/`, `Assets/`, `Storage/Layouts/PendingLayouts.json`, and `lifetech-theme.json`. Generated files are build outputs; make changes in `src/` and export again rather than editing generated assets directly.
+
+The exported theme must then be imported and tested in LifeTechOCMS. Exporting does **not** automatically publish it to the [LifeTechOCMS Theme Marketplace](https://www.lifetech.host/hubs/community/products?product=theme).
+
+## MdBlog Integration and Testing
+
+[MdBlog](https://github.com/lifetechOCMS/MdBlog) is the primary backend module used to establish practical conventions. Tests should cover retrieving blog content, handling API errors, React state and navigation, exporting layouts and views, and checking how module content renders inside a React layout.
+
+A successful standalone React test is **not** sufficient evidence that the exported theme behaves identically. Contributors should report results separately for standalone mode and LifeTechOCMS mode.
+
+## Development Conventions Under Evaluation
+
+- React Layouts belong in the configured layouts directory; page Views belong in the configured views directory.
+- Prefer reusable components rather than duplicating layout markup.
+- Keep backend requests in a shared API layer; avoid hardcoded local URLs in components.
+- Preserve backend role and permission enforcement; do not rely on frontend checks alone.
+- Use `.jsx` or `.tsx` for React components and verify both standalone and exported behavior.
+- Document any new convention through a tested example before treating it as established.
+
+## Contributing and Community
+
+**Help shape the first LifeTechOCMS React theme conventions.** Please [star this repository](https://github.com/ajayi-abolore/ThemeLtReactKit/stargazers), try the application, and share feedback.
+
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting a pull request. Report project-specific bugs and suggestions in [ThemeLtReactKit Issues](https://github.com/ajayi-abolore/ThemeLtReactKit/issues). For bugs in the npm exporter itself, use the [`@lifetechocms/react` issue tracker](https://github.com/ajayi-abolore/lifetechocms-react/issues).
 
 ## Related Projects
 
-- [LifeTechOCMS Framework](https://github.com/lifetechOCMS/lifetechocms)
-- [LifeTechOCMS Documentation](https://github.com/lifetechOCMS/docs)
-- [ThemeStarter](https://github.com/ajayi-abolore/ThemeStarter)
+- [LifeTechOCMS framework](https://github.com/lifetechOCMS/lifetechocms)
+- [LifeTechOCMS documentation](https://github.com/lifetechOCMS/docs)
+- [`@lifetechocms/react` plugin](https://github.com/ajayi-abolore/lifetechocms-react)
+- [LifeTechOCMS Theme Marketplace](https://www.lifetech.host/hubs/community/products?product=theme)
 
 ## License
 
-ThemeLtReactKit is intended to be released under the **MIT License**. The repository should include a `LICENSE` file containing the applicable terms.
-
----
-
-**ThemeLtReactKit — Building the future of React-powered themes for LifeTechOCMS.**
+Refer to the repository's `LICENSE` file for applicable terms. If one is not yet present, the project maintainers should select and add a license before describing the project as MIT-licensed.
